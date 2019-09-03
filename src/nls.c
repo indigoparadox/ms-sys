@@ -15,15 +15,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ******************************************************************/
-#include <locale.h>
-
-#include "nls.h"
-
 void nls_init(void)
-{   
-#ifndef NO_LIBINTL_OR_GETTEXT
-   setlocale (LC_ALL, "");
-   bindtextdomain (PACKAGE, LOCALEDIR);
-   textdomain (PACKAGE);
-#endif
+{
+
 } /* nls_init */

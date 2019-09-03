@@ -17,6 +17,9 @@
 # Name of program, compiled executable file
 PACKAGE = ms-sys
 
+# We do not like internationalization... 
+NO_LIBINTL_OR_GETTEXT = 1
+
 # Add anything extra you might need when comipiling below
 # Example: EXTRA_CFLAGS = -D MY_DEFINE=1
 
@@ -25,9 +28,11 @@ EXTRA_CFLAGS = -idirafter include-fallback -D_FILE_OFFSET_BITS=64
 
 # Add anything extra you might need when linking below
 # Example: EXTRA_LDFLAGS = -lm
-EXTRA_LDFLAGS =
+EXTRA_LDFLAGS = -static
 
 # Paths
+
+STRIP = strip
 
 # Installation path
 PREFIX ?= /usr/local
@@ -63,7 +68,7 @@ INCDIRS = $(INC)
 
 CC ?= gcc
 INCLUDES = $(INCDIRS:%=-I %)
-CFLAGS ?= -O2
+CFLAGS ?= -Os -s -march=i386 -mtune=i386 -m32
 ifeq ($(MAKECMDGOALS),debug)
 CFLAGS ?= -g
 endif
@@ -92,7 +97,7 @@ FILES = $(SRC_FILES:$(SRC)/%.c=%)
 OBJS = $(FILES:%=$(OBJ)/%.o)
 DEPS = $(FILES:%=$(DEP)/%.d)
 
-all debug: $(BIN)/$(PACKAGE) $(MO_FILES)
+all debug: $(BIN)/$(PACKAGE)
 
 install: $(DESTDIR)$(BINDIR)/$(PACKAGE) $(NLS_FILES) $(MAN_FILES)
 
@@ -124,6 +129,7 @@ $(DESTDIR)$(MANDIR)/%: $(MAN)/$(*F)
 
 $(BIN)/%: $(OBJS) 
 	$(CC) -o $@ $^ $(LDFLAGS)
+	$(STRIP) -s $@
 
 $(MESSAGES): $(SRC_FILES) $(INC_FILES)
 	xgettext -k_ -o$@ $^
@@ -149,5 +155,3 @@ endif
 
 # Used to force some rules to always be compiled
 FORCE: ;
-
-
